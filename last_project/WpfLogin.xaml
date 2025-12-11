@@ -1,0 +1,193 @@
+﻿<UserControl x:Class="last_project.WpfLogin"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="450"
+             Foreground="White">
+
+    <UserControl.Background>
+       <SolidColorBrush Color="#FF121212"/>
+    </UserControl.Background>
+
+    <UserControl.Resources>
+        <Geometry x:Key="UserIconGeom">M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z</Geometry>
+        <Geometry x:Key="LockIconGeom">M12,17A2,2 0 0,0 14,15C14,13.89 13.1,13 12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17M18,8H17V6A5,5 0 0,0 12,1 5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M15.5,8H8.5V6A3.5,3.5 0 0,1 12,2.5A3.5,3.5 0 0,1 15.5,6V8Z</Geometry>
+
+        <Style TargetType="Control" x:Key="ModernInputStyle">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="#1Affffff"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Control">
+                        <Border x:Name="border" 
+                                Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                CornerRadius="25">
+                            <Grid Margin="15,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Path Data="{TemplateBinding Tag}" 
+                                      Fill="#AAFFFFFF" 
+                                      Stretch="Uniform" 
+                                      Height="18" Width="18"
+                                      VerticalAlignment="Center" 
+                                      HorizontalAlignment="Left"/>
+
+                                <ScrollViewer x:Name="PART_ContentHost" Grid.Column="1" Margin="10,0,0,0"/>
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#2Affffff"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#64B5F6"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#22ffffff"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBox" BasedOn="{StaticResource ModernInputStyle}"/>
+        <Style TargetType="PasswordBox" BasedOn="{StaticResource ModernInputStyle}"/>
+
+        <Style x:Key="GradientButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" CornerRadius="25">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                    <GradientStop Color="#2980B9" Offset="0.0"/>
+                                    <GradientStop Color="#6DD5FA" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect Color="#2980B9" BlurRadius="20" ShadowDepth="0" Opacity="0.5"/>
+                            </Border.Effect>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Border Background="#FF1E1E1E" 
+                Width="380" 
+                CornerRadius="20" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Center"
+                Padding="40">
+            <Border.Effect>
+                <DropShadowEffect Color="Black" BlurRadius="30" ShadowDepth="10" Opacity="0.4"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <Ellipse Width="80" Height="80" Fill="#29303b" Margin="0,0,0,20">
+                    <Ellipse.OpacityMask>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Path Data="{StaticResource UserIconGeom}" Fill="Black" Stretch="Uniform" Margin="20"/>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Ellipse.OpacityMask>
+                </Ellipse>
+
+                <TextBlock Text="LOGIN SYSTEM" 
+                           FontSize="24" FontWeight="ExtraBold" 
+                           Foreground="White" 
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Please sign in to continue" 
+                           FontSize="12" Foreground="#888888" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,5,0,40"/>
+
+                <Grid Margin="0,0,0,20">
+                    <TextBox x:Name="TxtUserId" Tag="{StaticResource UserIconGeom}"/>
+
+                    <TextBlock Text="Username" IsHitTestVisible="False" 
+                               Foreground="#888888" VerticalAlignment="Center" Margin="55,0,0,0">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Text, ElementName=TxtUserId}" Value="">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+
+                <Grid Margin="0,0,0,40">
+                    <PasswordBox x:Name="TxtUserPw" Tag="{StaticResource LockIconGeom}"/>
+                </Grid>
+
+                <Button x:Name="BtnLogin" Content="SIGN IN" 
+                        Style="{StaticResource GradientButtonStyle}" 
+                        Click="BtnLogin_Click"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
+                    <TextBlock Text="Don't have an account?" Foreground="#666666" FontSize="12"/>
+                    <Button x:Name="BtnGoRegister" Content="Sign Up" 
+                            Margin="5,0,0,0"
+                            Background="Transparent" 
+                            Foreground="#6DD5FA" 
+                            FontWeight="Bold"
+                            FontSize="12"
+                            BorderThickness="0" 
+                            Cursor="Hand"
+                            Click="BtnGoRegister_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" TextDecorations="None">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="TextDecorations" Value="Underline"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

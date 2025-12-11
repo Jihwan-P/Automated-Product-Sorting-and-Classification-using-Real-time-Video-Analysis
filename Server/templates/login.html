@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - Moble</title>
+    <style>
+        /* 기본 설정 */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; 
+            background-color: #f2f4f7; /* 부드러운 회색 배경 */
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+        }
+
+        /* 로그인 박스 */
+        .login-box { 
+            background: white; 
+            width: 100%; 
+            max-width: 400px; /* 적당한 너비 */
+            padding: 50px 40px; 
+            border-radius: 12px; /* 둥근 모서리 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); /* 부드러운 그림자 */
+            text-align: center; 
+            box-sizing: border-box;
+        }
+
+        /* 로고 스타일 */
+        .logo { 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: #1a1a1a; 
+            text-decoration: none; 
+            display: inline-block; 
+            margin-bottom: 40px; 
+            letter-spacing: -1px;
+        }
+
+        /* 입력창 스타일 */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        input { 
+            width: 100%; 
+            height: 52px; 
+            padding: 0 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            transition: all 0.2s;
+            background-color: #fafafa;
+        }
+
+        input:focus { 
+            border-color: #1a1a1a; 
+            background-color: #fff;
+            outline: none; 
+        }
+
+        /* 로그인 버튼 */
+        button { 
+            width: 100%; 
+            height: 56px; 
+            background-color: #1a1a1a; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: background 0.3s; 
+        }
+
+        button:hover { 
+            background-color: #333; 
+        }
+
+        /* 하단 링크들 */
+        .links { 
+            margin-top: 30px; 
+            font-size: 14px; 
+            color: #888; 
+        }
+
+        .links a { 
+            color: #333; 
+            text-decoration: none; 
+            font-weight: 600; 
+            margin: 0 8px; 
+        }
+        
+        .links span {
+            color: #ddd;
+        }
+
+        .links a:hover { 
+            text-decoration: underline; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <a href="/" class="logo">Moble Login</a>
+        
+        <form onsubmit="return handleLogin(event)">
+            <div class="input-group">
+                <input type="text" id="id" placeholder="아이디를 입력하세요" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="pw" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+
+        <div class="links">
+            <a href="/register">회원가입</a> <span>|</span> <a href="/">메인으로</a>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin(e) {
+            e.preventDefault();
+            const id = document.getElementById('id').value;
+            const pw = document.getElementById('pw').value;
+
+            // 서버로 로그인 요청
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id, pw: pw })
+            })
+            .then(res => res.ok ? res.json() : Promise.reject(res))
+            .then(data => {
+                // 성공 시
+                alert('로그인 되었습니다.');
+                
+                // ★ [중요] 아이디 저장 (주문 내역 조회 및 결제 시 필수)
+                localStorage.setItem('user_id', id);
+                
+                location.href = '/'; // 메인으로 이동
+            })
+            .catch(() => alert('아이디 또는 비밀번호가 틀렸습니다.'));
+        }
+    </script>
+</body>
+</html>

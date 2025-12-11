@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - Moble</title>
+    <style>
+        /* === 기존 스타일 유지 === */
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: #1a1a1a;
+            text-decoration: none;
+            display: block;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-label {
+            display: block; font-size: 13px; font-weight: bold; color: #555; margin-bottom: 5px;
+        }
+        .form-input {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 14px; box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: #1a1a1a; outline: none; }
+        
+        .msg-box { font-size: 12px; margin-top: 5px; height: 15px; }
+        .text-error { color: #e53935; }
+        .text-success { color: #43a047; }
+
+        .btn-submit {
+            width: 100%; padding: 15px; background-color: #1a1a1a;
+            color: white; border: none; border-radius: 6px;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+            margin-top: 20px; transition: background 0.3s;
+        }
+        .btn-submit:hover { background-color: #333; }
+        
+        .links { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+        .links a { color: #1a1a1a; text-decoration: none; font-weight: bold; margin-left: 5px; }
+        .row-group { display: flex; gap: 10px; }
+
+        /* ▼▼▼ [추가] 캡차 관련 스타일 ▼▼▼ */
+        .captcha-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .captcha-img-wrapper {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 200px;
+            height: 60px; /* 네이버 캡차 기본 높이에 맞춤 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #eee;
+        }
+        .captcha-img-wrapper img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        .btn-refresh {
+            background: #fff; border: 1px solid #ddd; padding: 5px 10px;
+            border-radius: 4px; cursor: pointer; font-size: 12px; color: #555;
+            height: 60px;
+        }
+        .btn-refresh:hover { background: #f0f0f0; }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <a href="/" class="logo">Moble Join</a>
+        
+        <form onsubmit="return handleRegister(event)">
+            
+            <div class="form-group">
+                <label class="form-label">아이디</label>
+                <input type="text" id="id" class="form-input" placeholder="영문, 숫자 4자 이상" required minlength="4">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">비밀번호</label>
+                <input type="password" id="pw" class="form-input" placeholder="비밀번호 입력" required minlength="4">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">비밀번호 확인</label>
+                <input type="password" id="pw2" class="form-input" placeholder="비밀번호 재입력" required onkeyup="checkPasswordMatch()">
+                <div id="pw-msg" class="msg-box"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">이름</label>
+                <input type="text" id="name" class="form-input" placeholder="홍길동" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">휴대전화</label>
+                <input type="tel" id="phone" class="form-input" placeholder="010-1234-5678">
+            </div>
+
+            <div class="row-group">
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">이메일</label>
+                    <input type="email" id="email" class="form-input" placeholder="example@naver.com">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label class="form-label">생년월일</label>
+                    <input type="date" id="birth" class="form-input">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">보안 문자 입력</label>
+                <div class="captcha-box">
+                    <div class="captcha-img-wrapper">
+                        <img id="captchaImage" alt="Captcha">
+                    </div>
+                    <button type="button" class="btn-refresh" onclick="loadCaptcha()">새로고침</button>
+                </div>
+                <input type="text" id="captchaValue" class="form-input" placeholder="위 그림의 문자를 입력하세요" required>
+                <input type="hidden" id="captchaKey">
+            </div>
+            <button type="submit" class="btn-submit">가입하기</button>
+        </form>
+
+        <div class="links">
+            이미 계정이 있으신가요? <a href="/login">로그인</a>
+        </div>
+    </div>
+
+    <script>
+        // 비밀번호 실시간 확인 함수
+        function checkPasswordMatch() {
+            const pw = document.getElementById('pw').value;
+            const pw2 = document.getElementById('pw2').value;
+            const msg = document.getElementById('pw-msg');
+
+            if (pw2 === "") {
+                msg.innerHTML = "";
+                return;
+            }
+
+            if (pw === pw2) {
+                msg.innerHTML = "비밀번호가 일치합니다.";
+                msg.className = "msg-box text-success";
+            } else {
+                msg.innerHTML = "비밀번호가 일치하지 않습니다.";
+                msg.className = "msg-box text-error";
+            }
+        }
+
+        // ▼▼▼ [추가] 캡차 이미지 로드 함수 ▼▼▼
+        function loadCaptcha() {
+            fetch('/api/captcha/key')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.key) {
+                        // 이미지 소스 업데이트
+                        document.getElementById('captchaImage').src = data.image_url;
+                        // 검증 때 쓸 키 저장
+                        document.getElementById('captchaKey').value = data.key;
+                        // 입력창 초기화
+                        document.getElementById('captchaValue').value = '';
+                    } else {
+                        alert('보안 문자를 불러오는데 실패했습니다.');
+                    }
+                })
+                .catch(err => console.error('Captcha Error:', err));
+        }
+
+        // 페이지 로드 시 캡차 실행
+        window.onload = function() {
+            loadCaptcha();
+        };
+
+        // 회원가입 요청 함수
+        function handleRegister(e) {
+            e.preventDefault();
+
+            // 1. 값 가져오기
+            const id = document.getElementById('id').value;
+            const pw = document.getElementById('pw').value;
+            const pw2 = document.getElementById('pw2').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const birth = document.getElementById('birth').value;
+            
+            // 캡차 값 가져오기
+            const captchaKey = document.getElementById('captchaKey').value;
+            const captchaValue = document.getElementById('captchaValue').value;
+
+            // 2. 유효성 검사
+            if (pw !== pw2) {
+                alert('비밀번호가 일치하지 않습니다.');
+                document.getElementById('pw2').focus();
+                return;
+            }
+
+            // 3. 서버 전송 데이터
+            const userData = {
+                id: id,
+                pw: pw,
+                name: name,
+                nickname: name,
+                phone: phone,
+                email: email,
+                birthdate: birth,
+                // 캡차 데이터 추가 전송
+                captcha_key: captchaKey,
+                captcha_val: captchaValue
+            };
+
+            // 4. 서버 전송
+            fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            })
+            .then(res => {
+                if (res.ok) {
+                    return res.json();
+                } else {
+                    return res.json().then(err => { throw new Error(err.message); });
+                }
+            })
+            .then(data => {
+                alert('가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+                location.href = '/login';
+            })
+            .catch(error => {
+                alert('가입 실패: ' + error.message);
+                // 캡차 실패했을 수도 있으니 캡차 새로고침
+                loadCaptcha();
+            });
+        }
+    </script>
+</body>
+</html>

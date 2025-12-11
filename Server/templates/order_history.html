@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주문 내역 조회</title>
+    <style>
+        /* 기본 폰트 및 배경 설정 */
+        body { font-family: 'Apple SD Gothic Neo', sans-serif; background: #f5f5f5; padding: 20px; margin: 0; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        h2 { text-align: center; color: #333; margin-bottom: 30px; }
+
+        /* ▼▼▼ [수정 1] 테이블 스타일 정의 ▼▼▼ */
+        .order-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .order-table th { background: #f0f0f0; color: #333; font-weight: bold; padding: 12px; border-bottom: 2px solid #ddd; text-align: center; font-size: 14px; }
+        .order-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px; color: #555; vertical-align: middle; }
+        
+        /* 테이블 줄무늬 효과 (선택사항) */
+        .order-table tbody tr:hover { background-color: #fafafa; }
+
+        /* ▼▼▼ [수정 2] 상태별 뱃지 색상 ▼▼▼ */
+        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; min-width: 60px; }
+        .status-대기중 { background-color: #ff9800; }   /* 주황색 */
+        .status-결제완료 { background-color: #2196f3; } /* 파란색 */
+        .status-승인됨 { background-color: #4caf50; }   /* 초록색 */
+        .status-배송중 { background-color: #009688; }   /* 청록색 */
+        .status-취소 { background-color: #f44336; }     /* 빨간색 */
+
+        .btn-home { display: block; width: 200px; margin: 30px auto 0; padding: 12px; background: #333; color: white; text-align: center; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        .btn-home:hover { background: #555; }
+
+        .empty-msg { text-align: center; padding: 50px; color: #999; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📦 내 주문 내역</h2>
+        
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th width="10%">진행 상태</th>
+                    <th width="25%">품목</th>
+                    <th width="8%">수량</th>
+                    <th width="12%">단가</th>
+                    <th width="12%">총액</th>
+                    <th width="18%">발주 일자</th>
+                    <th width="15%">연락처</th>
+                </tr>
+            </thead>
+            <tbody id="order-list">
+                <tr><td colspan="7" class="empty-msg">로딩 중...</td></tr>
+            </tbody>
+        </table>
+
+        <a href="/" class="btn-home">메인으로 돌아가기</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrderHistory();
+        });
+
+        function loadOrderHistory() {
+            const userId = localStorage.getItem('user_id');
+            const tbody = document.getElementById('order-list');
+
+            if (!userId) {
+                alert('로그인이 필요합니다.');
+                location.href = '/login';
+                return;
+            }
+
+            fetch(`/api/order/my_list?user_id=${userId}`)
+            .then(res => res.json())
+            .then(data => {
+                tbody.innerHTML = ''; // 초기화
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">주문 내역이 없습니다.</td></tr>';
+                    return;
+                }
+
+                // ▼▼▼ [수정 4] 데이터를 테이블 행(tr)으로 변환 ▼▼▼
+                data.forEach(order => {
+                    // 숫자 콤마 찍기 & 총액 계산
+                    const price = order.price ? order.price.toLocaleString() : 0;
+                    const quantity = order.quantity || 0;
+                    const totalPrice = (order.price * quantity).toLocaleString();
+                    
+                    // 날짜 포맷 정리 (T 제거)
+                    let dateStr = order.order_date || '-';
+                    if(dateStr.includes('T')) dateStr = dateStr.replace('T', ' ').split('.')[0];
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><span class="status-badge status-${order.status}">${order.status}</span></td>
+                        <td style="text-align:left; padding-left:15px; font-weight:bold;">${order.item_name}</td>
+                        <td>${quantity}개</td>
+                        <td>${price}원</td>
+                        <td style="color:#d32f2f; font-weight:bold;">${totalPrice}원</td>
+                        <td style="font-size:13px; color:#888;">${dateStr}</td>
+                        <td>${order.contact || '-'}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(err => {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-msg" style="color:red;">불러오기 실패</td></tr>';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moble - Premium Logistics Shop</title>
+    <!-- 폰트어썸 (아이콘) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 프리텐다드 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
+    <style>
+        /* === 1. 디자인 변수 === */
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #111111;
+            --text-sub: #666666;
+            --accent: #ff4800;
+            --header-h: 80px;
+        }
+
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            margin: 0; 
+            padding-top: 130px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; padding: 0; margin: 0; }
+
+        /* === 2. 헤더 (화이트 프리미엄) === */
+        header { 
+            background-color: rgba(255, 255, 255, 0.98); 
+            border-bottom: 1px solid #eee;
+            position: fixed; top: 0; width: 100%; height: 130px; z-index: 1000;
+        }
+        
+        .header-top { 
+            display: flex; justify-content: space-between; align-items: center; 
+            max-width: 1400px; margin: 0 auto; padding: 0 40px; height: 70px; 
+        }
+        
+        .logo { font-weight: 900; font-size: 1.8em; cursor: pointer; letter-spacing: -1px; font-style: italic; }
+        
+        /* 검색창 */
+        .search-bar { 
+            display: flex; align-items: center; background: #f4f4f4; padding: 10px 20px; 
+            border-radius: 50px; width: 400px; transition: 0.3s;
+        }
+        .search-bar:focus-within { background: #fff; box-shadow: 0 0 0 2px #111; }
+        .search-bar input { border: none; outline: none; flex-grow: 1; background: transparent; font-size: 15px; }
+        .search-bar button { background: none; border: none; cursor: pointer; font-size: 18px; color: #555; }
+
+        /* 우측 아이콘 메뉴 */
+        .header-icons { display: flex; gap: 25px; align-items: center; }
+        .icon-item { position: relative; cursor: pointer; font-size: 22px; transition: 0.2s; padding: 10px 0; }
+        .icon-item:hover { color: var(--accent); }
+        
+        /* 사용자 드롭다운 */
+        .user-dropdown {
+            display: none; position: absolute; top: 40px; right: -10px;
+            background: white; min-width: 150px; border: 1px solid #eee;
+            border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden; z-index: 2000;
+        }
+        .icon-item:hover .user-dropdown { display: block; }
+        .user-dropdown a { 
+            display: block; padding: 12px 15px; font-size: 14px; color: #333; 
+            border-bottom: 1px solid #f9f9f9; transition: 0.2s; white-space: nowrap;
+        }
+        .user-dropdown a:hover { background: #f5f5f5; color: var(--accent); font-weight: 600; }
+
+        .cart-badge { 
+            position: absolute; top: -5px; right: -8px; 
+            background: var(--accent); color: white; 
+            font-size: 11px; width: 18px; height: 18px; 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; 
+        }
+
+        /* === 3. 내비게이션 바 === */
+        .navbar { 
+            display: flex; justify-content: center; height: 60px; align-items: center; 
+            max-width: 1400px; margin: 0 auto; border-top: 1px solid #eee; 
+        }
+        .dropdown { position: relative; height: 100%; display: flex; align-items: center; }
+        .dropbtn { 
+            background: transparent; border: none; cursor: pointer; 
+            font-size: 15px; font-weight: 700; color: #333; 
+            padding: 0 30px; height: 100%; text-transform: uppercase;
+            font-family: 'Pretendard', sans-serif;
+        }
+        .dropdown:hover .dropbtn { color: var(--accent); }
+        
+        .dropdown-content { 
+            display: none; position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+            background-color: white; min-width: 160px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            border-radius: 8px; overflow: hidden; padding: 5px 0; border: 1px solid #eee;
+            z-index: 2000;
+        }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { display: block; padding: 12px 20px; font-size: 14px; color: #555; transition: 0.2s; cursor: pointer; }
+        .dropdown-content a:hover { background: #f9f9f9; color: var(--accent); font-weight: bold; }
+
+        /* === 4. 메인 배너 === */
+        .hero {
+            height: 450px;
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1920');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; margin-top: 0;
+        }
+        .hero h1 { font-size: 50px; font-weight: 900; margin: 0 0 15px; letter-spacing: -1px; }
+        .hero p { font-size: 18px; font-weight: 300; margin: 0 0 30px; opacity: 0.9; }
+        .hero-btn { padding: 12px 35px; background: white; color: black; font-weight: 700; border-radius: 30px; cursor: pointer; transition: 0.3s; }
+        .hero-btn:hover { background: var(--accent); color: white; }
+
+        /* === 5. 상품 리스트 === */
+        main { max-width: 1400px; margin: 50px auto; padding: 0 40px; }
+        .section-title { font-size: 22px; font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 20px; background: var(--text-main); display: block; }
+
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+            gap: 40px 25px; 
+        }
+        
+        .product-card { cursor: pointer; transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-8px); }
+        
+        .img-box { 
+            height: 320px; background: #f4f4f4; border-radius: 8px; overflow: hidden; position: relative; margin-bottom: 15px; 
+        }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .product-card:hover .img-box img { transform: scale(1.05); }
+
+        .cart-overlay-btn {
+            position: absolute; bottom: 15px; right: 15px;
+            width: 40px; height: 40px; background: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            opacity: 0; transform: translateY(10px); transition: 0.3s;
+            font-size: 18px; color: var(--text-main);
+        }
+        .product-card:hover .cart-overlay-btn { opacity: 1; transform: translateY(0); }
+        .cart-overlay-btn:hover { background: var(--text-main); color: white; }
+
+        .info-box h3 { font-size: 12px; color: #999; margin: 0 0 5px; text-transform: uppercase; font-weight: 700; }
+        .info-box h2 { font-size: 15px; margin: 0 0 8px; color: #222; font-weight: 600; height: 40px; overflow: hidden; line-height: 1.4; }
+        .info-box .price { font-size: 17px; font-weight: 800; color: #111; }
+
+        /* 페이지네이션 */
+        .pagination { display: flex; justify-content: center; margin-top: 60px; gap: 8px; }
+        .page-btn { 
+            width: 36px; height: 36px; display: flex; justify-content: center; align-items: center;
+            border: 1px solid #eee; color: #888; border-radius: 50%; 
+            cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 14px;
+        }
+        .page-btn.active { background: var(--text-main); color: white; border-color: var(--text-main); }
+        .page-btn:hover:not(.active) { border-color: var(--text-main); color: var(--text-main); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <span class="logo" onclick="location.reload()">Moble.</span>
+            
+            <div class="search-bar">
+                <button onclick="searchNaver()"><i class="fas fa-search"></i></button>
+                <input type="text" id="search-input" placeholder="브랜드, 상품을 검색해보세요" onkeyup="if(window.event.keyCode==13){searchNaver()}">
+            </div>
+            
+            <div class="header-icons">
+                <!-- 사람 아이콘: 로그인/회원가입/주문조회 -->
+                <div class="icon-item">
+                    <i class="far fa-user"></i>
+                    <div class="user-dropdown" id="user-menu-dropdown">
+                        <!-- JS로 내용이 바뀝니다 -->
+                        <a href="/login">로그인</a>
+                        <a href="/register">회원가입</a>
+                        <a href="/order_history">주문조회</a>
+                    </div>
+                </div>
+
+                <!-- 장바구니 아이콘 -->
+                <div class="icon-item" onclick="location.href='/cart'">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge" id="cart-count">0</span>
+                </div>
+
+                <div class="icon-item"><i class="fas fa-globe"></i></div>
+            </div>
+        </div>
+
+        <nav class="navbar">
+            <div class="dropdown"><button class="dropbtn" onclick="selectMenu('인기 브랜드 의류', 'All')">ALL</button></div>
+            
+            <div class="dropdown">
+                <button class="dropbtn">DESCENTE</button>
+                <div class="dropdown-content">
+                    <a onclick="selectMenu('Descente', 'All')">전체보기</a>
+                    <a onclick="selectMenu('Descente', 'Top')">상의</a>
+                    <a onclick="selectMenu('Descente', 'Bottom')">하의</a>
+                    <a onclick="selectMenu('Descente', 'Outer')">아우터</a>
+                    <a onclick="selectMenu('Descente', 'Shoes')">신발</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">BEANPOLE</button>
+                <div class="dropdown-content">
+                    <a onclick="selectMenu('Beanpole', 'All')">전체보기</a>
+                    <a onclick="selectMenu('Beanpole', 'Top')">상의</a>
+                    <a onclick="selectMenu('Beanpole', 'Bottom')">하의</a>
+                    <a onclick="selectMenu('Beanpole', 'Outer')">아우터</a>
+                    <a onclick="selectMenu('Beanpole', 'Shoes')">신발</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">UMBRO</button>
+                <div class="dropdown-content">
+                    <a onclick="selectMenu('Umbro', 'All')">전체보기</a>
+                    <a onclick="selectMenu('Umbro', 'Top')">상의</a>
+                    <a onclick="selectMenu('Umbro', 'Bottom')">하의</a>
+                    <a onclick="selectMenu('Umbro', 'Outer')">아우터</a>
+                    <a onclick="selectMenu('Umbro', 'Shoes')">신발</a>
+                </div>
+            </div>
+
+            <div class="dropdown">
+                <button class="dropbtn">PUMA</button>
+                <div class="dropdown-content">
+                    <a onclick="selectMenu('Puma', 'All')">전체보기</a>
+                    <a onclick="selectMenu('Puma', 'Top')">상의</a>
+                    <a onclick="selectMenu('Puma', 'Bottom')">하의</a>
+                    <a onclick="selectMenu('Puma', 'Outer')">아우터</a>
+                    <a onclick="selectMenu('Puma', 'Shoes')">신발</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>NEW COLLECTION</h1>
+        <p>Smart Logistics & Premium Fashion</p>
+        <div class="hero-btn" onclick="document.getElementById('main-content').scrollIntoView({behavior:'smooth'})">Shop Now</div>
+    </div>
+
+    <main id="main-content">
+        <div class="section-title">
+            <span id="section-title-text">TRENDING NOW</span>
+        </div>
+        <div class="product-grid" id="brand-list"></div>
+        <div class="pagination" id="pagination"></div>
+    </main>
+
+    <script>
+        let currentOrder = {};
+        let isLoggedIn = false;
+        let loggedInUserId = 'Guest';
+        let globalApiData = []; 
+        let currentPage = 1;
+        const itemsPerPage = 12;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            selectMenu('인기 브랜드 의류', 'All'); 
+            updateCartBadge();
+            checkLoginStatus();
+        });
+
+        // --- 로그인 체크 ---
+        function checkLoginStatus() {
+            const userId = localStorage.getItem('user_id');
+            const dropdown = document.getElementById('user-menu-dropdown');
+            if (userId) {
+                isLoggedIn = true; loggedInUserId = userId;
+                dropdown.innerHTML = `<a style="font-weight:bold; color:var(--accent);">${userId}님</a><a href="/order_history">주문조회</a><a href="#" onclick="logout()">로그아웃</a>`;
+            } else {
+                dropdown.innerHTML = `<a href="/login">로그인</a><a href="/register">회원가입</a><a href="#" onclick="alert('로그인이 필요한 서비스입니다..')">주문조회</a>`;
+            }
+        }
+        function logout() { localStorage.removeItem('user_id'); alert('로그아웃되었습니다.'); location.reload(); }
+
+        // --- ★ 핵심: 검색 로직 (ALL 선택 시 데이터 병합) ---
+        async function selectMenu(brand, category) {
+            currentPage = 1;
+            // 한글 매핑
+            const brandMap = { 'Descente': '데상트', 'Beanpole': '빈폴', 'Umbro': '엄브로', 'Puma': '퓨마', '인기 브랜드 의류': '인기 브랜드 의류' };
+            const catMap = { 'Top': '상의', 'Bottom': '하의', 'Outer': '아우터', 'Shoes': '신발' };
+            
+            const krBrand = brandMap[brand] || brand;
+            const titleEl = document.getElementById('section-title-text');
+            const container = document.getElementById('brand-list');
+            const pagination = document.getElementById('pagination');
+
+            titleEl.innerText = brand === '인기 브랜드 의류' ? 'TRENDING NOW' : brand.toUpperCase();
+            container.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:100px;">상품을 불러오는 중...</p>';
+            pagination.innerHTML = '';
+
+            try {
+                let items = [];
+
+                if (category === 'All' && brand !== '인기 브랜드 의류') {
+                    // ★ [핵심] '전체보기' 클릭 시: 상의, 하의, 아우터, 신발 데이터를 모두 가져와서 합칩니다.
+                    // 이렇게 하면 API 한계(100개)를 넘어 400개까지도 확보 가능하여 "엄브로" 전체 개수가 많아집니다.
+                    const categories = ['상의', '하의', '아우터', '신발'];
+                    const promises = categories.map(cat => 
+                        fetch(`/api/naver/search?query=${krBrand} ${cat}`).then(res => res.ok ? res.json() : [])
+                    );
+                    
+                    const results = await Promise.all(promises);
+                    // 결과 합치기
+                    items = results.flat(); 
+                    
+                    // 셔플 (순서 섞기) - 너무 상의만 먼저 나오지 않게
+                    items.sort(() => Math.random() - 0.5);
+
+                } else {
+                    // 일반 카테고리 선택 시
+                    const query = category === 'All' ? krBrand : `${krBrand} ${catMap[category]}`;
+                    
+                    // 병렬 호출 (1페이지 + 2페이지)
+                    const [res1, res2] = await Promise.all([
+                        fetch(`/api/naver/search?query=${query}&start=1`),
+                        fetch(`/api/naver/search?query=${query}&start=101`)
+                    ]);
+                    
+                    const data1 = res1.ok ? await res1.json() : [];
+                    const data2 = res2.ok ? await res2.json() : [];
+                    items = [...data1, ...data2];
+                }
+
+                if (items.length === 0) {
+                    container.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:100px;">검색 결과가 없습니다.</p>';
+                    globalApiData = [];
+                } else {
+                    globalApiData = items;
+                    renderProducts();
+                }
+
+            } catch (e) {
+                console.error(e);
+                container.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:100px; color:red;">서버 연결 실패</p>';
+            }
+        }
+
+        // --- 상품 그리기 ---
+        function renderProducts() {
+            const container = document.getElementById('brand-list');
+            container.innerHTML = '';
+            
+            if(globalApiData.length === 0) return;
+
+            const start = (currentPage - 1) * itemsPerPage;
+            const pageItems = globalApiData.slice(start, start + itemsPerPage);
+
+            pageItems.forEach(item => {
+                const cleanTitle = item.title.replace(/<[^>]*>?/g, ''); 
+                const priceNum = Number(item.lprice);
+                const div = document.createElement('div');
+                div.className = 'product-card';
+                div.onclick = (e) => { if(!e.target.closest('.cart-overlay-btn')) addToCart(item, cleanTitle, priceNum); };
+                
+                div.innerHTML = `
+                    <div class="img-box">
+                        <img src="${item.image}" alt="${cleanTitle}">
+                        <div class="cart-overlay-btn" onclick="event.stopPropagation(); addToCart({image:'${item.image}', brand:'${item.brand}'}, '${cleanTitle}', ${priceNum})">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>${item.brand || 'NAVER'}</h3>
+                        <h2>${cleanTitle}</h2>
+                        <div class="price">${priceNum.toLocaleString()}원</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
+            const totalPages = Math.ceil(globalApiData.length / itemsPerPage);
+            if (totalPages <= 1) return;
+
+            // 페이지가 너무 많으면 최대 10페이지만 보여주거나 스크롤
+            const maxPageBtn = 10;
+            const endPage = Math.min(totalPages, maxPageBtn);
+
+            for(let i=1; i<=endPage; i++) {
+                const btn = document.createElement('div');
+                btn.className = `page-btn ${i===currentPage ? 'active' : ''}`;
+                btn.innerText = i;
+                btn.onclick = () => { currentPage=i; renderProducts(); document.getElementById('main-content').scrollIntoView({behavior:'smooth'}); };
+                container.appendChild(btn);
+            }
+        }
+
+        // --- 브랜드 필터 (나이키 등 차단) ---
+        function searchNaver() {
+            const q = document.getElementById('search-input').value.trim();
+            if(!q) return alert('검색어를 입력하세요');
+
+            // 허용된 브랜드 목록
+            const allowed = ['데상트', 'descente', '빈폴', 'beanpole', '엄브로', 'umbro', '퓨마', 'puma'];
+            const isAllowed = allowed.some(brand => q.toLowerCase().includes(brand));
+
+            if (!isAllowed) {
+                document.getElementById('section-title-text').innerText = `'${q}' 검색 결과`;
+                document.getElementById('brand-list').innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:100px;">검색 결과가 없습니다.<br><span style="font-size:14px; color:#999; margin-top:10px; display:block;">(취급 브랜드: 데상트, 빈폴, 엄브로, 퓨마)</span></p>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            selectMenu(q, 'All');
+        }
+
+        function addToCart(item, title, price) {
+            if (!localStorage.getItem('user_id')) { if(confirm('로그인이 필요한 서비스입니다. 이동하시겠습니까?')) location.href = '/login'; return; }
+            let cart = JSON.parse(localStorage.getItem('myCart')) || {};
+            if (!cart[title]) cart[title] = { name: title, price: price, qty: 1, image: item.image, brand: item.brand };
+            else cart[title].qty++;
+            localStorage.setItem('myCart', JSON.stringify(cart));
+            updateCartBadge();
+            if(confirm('장바구니에 담겼습니다. 이동하시겠습니까?')) location.href = '/cart';
+        }
+
+        function updateCartBadge() {
+            let cart = JSON.parse(localStorage.getItem('myCart')) || {};
+            let total = 0;
+            Object.values(cart).forEach(i => total += i.qty);
+            document.getElementById('cart-count').innerText = total;
+        }
+    </script>
+</body>
+</html>
